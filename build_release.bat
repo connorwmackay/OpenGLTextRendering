@@ -3,4 +3,5 @@ CD build
 cmake ..
 CD ..
 cmake --build build --config release
-build\release\TextRenderer.exe
+start CMD /k "build\release\TextRenderer.exe"
+pause
