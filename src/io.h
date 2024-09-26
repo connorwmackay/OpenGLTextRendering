@@ -9,7 +9,7 @@ class File_IO {
     public:
         File_IO() {}
 
-        const std::string read_file(const std::string& fileName) {
+        static const std::string read_file(const std::string& fileName) {
             std::string file_data;
 
             std::ifstream file_stream (fileName);
@@ -23,7 +23,7 @@ class File_IO {
             return file_data;
         }
 
-        void write_file(const std::string& fileName, const std::string& data) {
+        static void write_file(const std::string& fileName, const std::string& data) {
             std::ofstream file_stream (fileName);
             file_stream << data;
             file_stream.close();

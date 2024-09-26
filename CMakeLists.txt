@@ -50,6 +50,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/libraries/glad/src/glad.c
     ${CMAKE_SOURCE_DIR}/src/main.cpp
     ${CMAKE_SOURCE_DIR}/src/font.h
+    ${CMAKE_SOURCE_DIR}/src/io.h
+    ${CMAKE_SOURCE_DIR}/src/shader.h
 )
 
 include_directories(SOURCES)

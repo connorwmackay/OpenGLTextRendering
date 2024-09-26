@@ -23,10 +23,8 @@ int main(int argc, char **argv) {
     Font::init();
     Font font = Font("assets/MinimalPixelFont.ttf", 16);
 
-    File_IO file_io = File_IO();
-    file_io.write_file("assets/save", "{playerHealth: 10}");
-
-    std::cout << file_io.read_file("assets/save") << "\n";
+    File_IO::write_file("assets/save", "{playerHealth: 10}");
+    std::cout << File_IO::read_file("assets/save") << "\n";
 
     if (!glfwInit())
         return -1;
