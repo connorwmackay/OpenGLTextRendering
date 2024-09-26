@@ -42,6 +42,10 @@ IF(NOT EXISTS "${CMAKE_SOURCE_DIR}/libraries/freetype-windows-binaries/release s
     message(SEND_ERROR "libraries/freetype-windows-binaries/include directory was not found")
 ENDIF()
 
+IF(NOT EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm")
+    message(SEND_ERROR "libraries/glm directory was not found")
+ENDIF()
+
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/libraries/glad/src/glad.c
     ${CMAKE_SOURCE_DIR}/src/main.cpp
@@ -54,4 +58,4 @@ find_package(OpenGL REQUIRED)
 
 add_executable(TextRenderer ${SOURCES})
 target_link_libraries(TextRenderer PUBLIC opengl32 ${CMAKE_SOURCE_DIR}/libraries/GLFW/lib/glfw3.lib "${CMAKE_SOURCE_DIR}/libraries/freetype-windows-binaries/release static/vs2015-2022/win64/freetype.lib")
-target_include_directories(TextRenderer PUBLIC ${CMAKE_SOURCE_DIR}/libraries/glad/include ${CMAKE_SOURCE_DIR}/libraries/GLFW/include ${CMAKE_SOURCE_DIR}/libraries/freetype-windows-binaries/include)
+target_include_directories(TextRenderer PUBLIC ${CMAKE_SOURCE_DIR}/libraries/glad/include ${CMAKE_SOURCE_DIR}/libraries/GLFW/include ${CMAKE_SOURCE_DIR}/libraries/freetype-windows-binaries/include ${CMAKE_SOURCE_DIR}/libraries/glm)

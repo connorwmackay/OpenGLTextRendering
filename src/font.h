@@ -4,6 +4,7 @@
 #include FT_FREETYPE_H
 #include <iostream>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
 static FT_Library library;
 
@@ -46,7 +47,7 @@ class Font {
             //glDeleteVertexArrays(1, &vao);
         }
 
-        void draw_text(std::string text, int x, int y) {
+        void draw_text(std::string text, glm::vec2 pos, glm::vec4 colour) {
             // TODO: Implement this.
         }
     protected:

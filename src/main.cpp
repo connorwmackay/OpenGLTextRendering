@@ -1,4 +1,5 @@
 #include "font.h"
+#include "io.h"
 
 #include <iostream>
 #include <glad/glad.h>
@@ -21,6 +22,11 @@ void GLAPIENTRY MessageCallback( GLenum source,
 int main(int argc, char **argv) {
     Font::init();
     Font font = Font("assets/MinimalPixelFont.ttf", 16);
+
+    File_IO file_io = File_IO();
+    file_io.write_file("assets/save", "{playerHealth: 10}");
+
+    std::cout << file_io.read_file("assets/save") << "\n";
 
     if (!glfwInit())
         return -1;
@@ -60,7 +66,7 @@ int main(int argc, char **argv) {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        font.draw_text("Hello, World", 32, 32);
+        font.draw_text("Hello, World", glm::vec2(32, 32), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
         glfwSwapBuffers(window);
     }
