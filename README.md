@@ -1,6 +1,5 @@
 # OpenGL Text Rendering
-This project currently requires OpenGL 4.5+.
-
+This project currently requires OpenGL 4.5+. You can create a font at a specific font size and all characters drawn using the font will be instanced, meaning one draw call for all text that uses the font.
 ![showcase](showcase.png)
 
 ## Running the project
