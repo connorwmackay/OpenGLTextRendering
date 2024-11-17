@@ -1,6 +1,8 @@
 # OpenGL Text Rendering
 This project currently requires OpenGL 4.5+.
 
+![showcase](showcase.png)
+
 ## Running the project
 - You can run ```./build_debug.bat``` to build and run the project in debug mode
 - You can run ```./build_release.bat``` to build and run the project in release mode
