@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     glm::mat4 view = glm::mat4(1.0f);
 
     Shader textShader = Shader("assets/text.vert", "assets/text.frag");
-    Font font = Font("assets/arial.ttf", 48);
+    Font font = Font("C:/Windows/Fonts/arial.ttf", 48);
 
     int width = 0, height = 0;
     while (!glfwWindowShouldClose(window)) {
