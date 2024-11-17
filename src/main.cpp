@@ -24,9 +24,6 @@ void GLAPIENTRY MessageCallback( GLenum source,
 int main(int argc, char **argv) {
     Font::Init();
 
-    File_IO::write_file("assets/save", "{playerHealth: 10}");
-    std::cout << File_IO::read_file("assets/save") << "\n";
-
     if (!glfwInit())
         return -1;
     
@@ -65,7 +62,7 @@ int main(int argc, char **argv) {
     glm::mat4 view = glm::mat4(1.0f);
 
     Shader textShader = Shader("assets/text.vert", "assets/text.frag");
-    
+
     Font font = Font("C:/Windows/Fonts/arial.ttf", 48);
 
     int width = 0, height = 0;
