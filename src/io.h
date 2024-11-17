@@ -28,8 +28,6 @@ class File_IO {
             file_stream << data;
             file_stream.close();
         }
-    private:
-
 };
 
 #endif

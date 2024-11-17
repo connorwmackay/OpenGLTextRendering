@@ -1,10 +1,15 @@
 #ifndef FONT_H
 #define FONT_H
+
+#include "shader.h"
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <iostream>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <vector>
+#include <unordered_map>
 
 static FT_Library library;
 
@@ -13,79 +18,57 @@ enum class FontResult {
     Success,
 };
 
+struct FontGlyph {
+    char c;
+    int glyphIndex;
+    glm::ivec2 pos;
+    glm::ivec2 size;
+
+    long advanceX;
+    long advancedY;
+};
+
 class Font {
+    FT_Error error;
+    FT_Face face;
+    float fontSize;
+
+    // OpenGL State
+    GLuint texture;
+    GLuint vertexArray;
+    GLuint vertexBuffer;
+    GLuint instancePositionBuffer;
+    GLuint instanceGlyphIndexBuffer;
+    GLuint instanceColourBuffer;
+
+    std::unordered_map<char, FontGlyph> glyphs;
+
+    std::vector<glm::vec2> characterPositions;
+    std::vector<glm::vec3> characterColours;
+    std::vector<int> characterGlyphIndices;
+
+    unsigned int maxCharacterWidth, maxCharacterHeight;
+
     public:
-        static FontResult init() {
-            if (FT_Init_FreeType(&library))
-                return FontResult::Error;
+        static FontResult Init();
 
-            return FontResult::Success;
-        }
+        Font() {}
 
-        Font(std::string fontFile, int fontSize) {
-            error = FT_New_Face(library, fontFile.c_str(), 0, &face);
+        Font(std::string fontFile, int fontSize);
 
-            if (error == FT_Err_Unknown_File_Format) {
-                std::cout << "Could not load font due to unknown file format\n";
-                return;
-            } else if (error) {
-                std::cout << "Encountered an error when loading the font\n";
-                return;
-            } else {
-                std::cout << "Successfully loaded font\n";
-            }
+        void DrawText(std::string text, glm::vec2 position, glm::vec3 colour, float scale);
+        void RenderText();
 
-            error = FT_Set_Pixel_Sizes(face, 0, fontSize);
-            handle_font_error();
+        void Free();
 
-            load_glyphs_gpu();
-        }
-
-        ~Font() {
-            //glDeleteBuffers(1, &vbo);
-            //glDeleteTextures(1, &texture);
-            //glDeleteVertexArrays(1, &vao);
-        }
-
-        void draw_text(std::string text, glm::vec2 pos, glm::vec4 colour) {
-            // TODO: Implement this.
-        }
-    protected:
-        // Deal with an error if one if encountered
-        void handle_font_error() {
-            if (error) {
-                std::cout << "Encountered a font error\n";
-            }
-        }
-
-        // Select a glyph and load it into memory
-        void load_glyph(const char& c) {
-            int glyph_index = FT_Get_Char_Index(face, c);
-            error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
-            handle_font_error();
-        }
-
-        // Get a bitmap of the currently selected glyph
-        void render_glyph() {
-            error = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
-            handle_font_error();
-        }
-
-        // Load all the glyphs on the GPU side so they can be easily rendered
-        void load_glyphs_gpu() {
-            // TODO: Loop through all the glyphs
-            // TODO: Render each glyph and pass data to gpu
-
-            //glCreateVertexArrays(1, & vao);
-            //glCreateBuffers(1, &vbo);
-            //glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-        }
     private:
-        FT_Error error;
-        FT_Face face;
-        GLuint texture;
-        GLuint vao;
-        GLuint vbo;
+        // Deal with an error if one if encountered
+        FontResult HandleFontError();
+
+        // Load the Glyph Data of All Ascii Characters (A-Z, punctuation etc.) and Pass Bitmap Data to an OpenGL Texture
+        void LoadSupportedGlyphs();
+
+        void SetupOpenGLState(unsigned int maxCharacterWidth, unsigned int maxCharacterHeight);
 };
 
 #endif

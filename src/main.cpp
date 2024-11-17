@@ -4,6 +4,8 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 void GLAPIENTRY MessageCallback( GLenum source,
                  GLenum type,
@@ -20,8 +22,7 @@ void GLAPIENTRY MessageCallback( GLenum source,
 
 
 int main(int argc, char **argv) {
-    Font::init();
-    Font font = Font("assets/MinimalPixelFont.ttf", 16);
+    Font::Init();
 
     File_IO::write_file("assets/save", "{playerHealth: 10}");
     std::cout << File_IO::read_file("assets/save") << "\n";
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
     #endif
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Text Renderer", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1366, 768, "Text Renderer", nullptr, nullptr);
 
     if (!window)
         return -1;
@@ -48,8 +49,8 @@ int main(int argc, char **argv) {
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         return -1;
 
-    glViewport(0, 0, 1280, 720);
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glViewport(0, 0, 1366, 768);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     #ifdef _DEBUG
         glEnable(GL_DEBUG_OUTPUT);
@@ -60,15 +61,43 @@ int main(int argc, char **argv) {
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glm::mat4 projection = glm::ortho(0.0f, 1366.0f, 768.0f, 0.0f, 10.0f, -10.0f);
+    glm::mat4 view = glm::mat4(1.0f);
+
+    Shader textShader = Shader("assets/text.vert", "assets/text.frag");
+    Font font = Font("assets/arial.ttf", 48);
+
+    int width = 0, height = 0;
     while (!glfwWindowShouldClose(window)) {
+        int curWidth, curHeight;
+        glfwGetWindowSize(window, &curWidth, &curHeight);
+        if (curWidth != width || curHeight != height) {
+            glViewport(0, 0, curWidth, curHeight);
+            width = curWidth;
+            height = curHeight;
+        }
+
         glfwPollEvents();
 
+        // Render Loop
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        font.draw_text("Hello, World", glm::vec2(32, 32), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
+        // Start Rendering Text
+        glUseProgram(textShader.getProgram());
+            glUniformMatrix4fv(glGetUniformLocation(textShader.getProgram(), "viewProjection"), 1, GL_FALSE, glm::value_ptr(projection * view));
+
+            font.DrawText("Hello, World!", glm::vec2(32, 32), glm::vec3(1.0f, 1.0f, 0.0f), 1.0f);
+            font.DrawText("Another text example :)", glm::vec2(128, 128), glm::vec3(1.0f, 0.0f, 0.0f), 1.0f);
+
+            // Renders All Text Called via DrawText()
+            font.RenderText();
+        glUseProgram(0);
+
+        // Swap Buffers
         glfwSwapBuffers(window);
     }
 
+    FT_Done_FreeType(library);
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
