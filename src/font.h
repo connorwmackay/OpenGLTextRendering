@@ -38,8 +38,11 @@ class Font {
     GLuint vertexArray;
     GLuint vertexBuffer;
     GLuint instancePositionBuffer;
+    size_t instancePositionBufferSize;
     GLuint instanceGlyphIndexBuffer;
+    size_t instanceGlyphIndexBufferSize;
     GLuint instanceColourBuffer;
+    size_t instanceColourBufferSize;
 
     std::unordered_map<char, FontGlyph> glyphs;
 

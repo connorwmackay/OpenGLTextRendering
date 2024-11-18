@@ -153,6 +153,10 @@ void Font::SetupOpenGLState(unsigned int maxCharacterWidth, unsigned int maxChar
         {x + maxCharacterWidth*unit, y + maxCharacterHeight*unit, 1.0, 1.0}
     };
 
+    instancePositionBufferSize = sizeof(glm::vec2);
+    instanceColourBufferSize = sizeof(glm::vec3);
+    instanceGlyphIndexBufferSize = sizeof(int);
+
     // Vertices
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, glyphVertices, GL_STATIC_DRAW);
@@ -162,7 +166,7 @@ void Font::SetupOpenGLState(unsigned int maxCharacterWidth, unsigned int maxChar
 
     // Instance Positions
     glBindBuffer(GL_ARRAY_BUFFER,  instancePositionBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2), nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, instancePositionBufferSize, nullptr, GL_STREAM_DRAW);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glVertexAttribDivisor(1, 1);
@@ -170,7 +174,7 @@ void Font::SetupOpenGLState(unsigned int maxCharacterWidth, unsigned int maxChar
 
     // Instance Colours
     glBindBuffer(GL_ARRAY_BUFFER,  instanceColourBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3), nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, instanceColourBufferSize, nullptr, GL_STREAM_DRAW);
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glVertexAttribDivisor(2, 1);
@@ -178,7 +182,7 @@ void Font::SetupOpenGLState(unsigned int maxCharacterWidth, unsigned int maxChar
 
     // Instance Colours
     glBindBuffer(GL_ARRAY_BUFFER,  instanceGlyphIndexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int), nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, instanceGlyphIndexBufferSize, nullptr, GL_STREAM_DRAW);
     glEnableVertexAttribArray(3);
     glVertexAttribIPointer(3, 1, GL_INT, GL_FALSE, (void*)0);
     glVertexAttribDivisor(3, 1);
@@ -210,13 +214,26 @@ void Font::RenderText() {
     // Pass the Character Data to OpenGL
     glDepthMask(GL_FALSE);
     glBindBuffer(GL_ARRAY_BUFFER,  instancePositionBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * characterPositions.size(), characterPositions.data(), GL_STREAM_DRAW);
+
+    if (instancePositionBufferSize != sizeof(glm::vec2) * characterPositions.size()) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * characterPositions.size(), characterPositions.data(), GL_STREAM_DRAW);
+    } else {
+        glBufferSubData(GL_ARRAY_BUFFER, 0, instancePositionBufferSize, characterPositions.data());
+    }
     
     glBindBuffer(GL_ARRAY_BUFFER,  instanceColourBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * characterColours.size(), characterColours.data(), GL_STREAM_DRAW);
+    if (instanceColourBufferSize != sizeof(glm::vec3) * characterColours.size()) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * characterColours.size(), characterColours.data(), GL_STREAM_DRAW);
+    } else {
+        glBufferSubData(GL_ARRAY_BUFFER, 0, instanceColourBufferSize, characterColours.data());
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER,  instanceGlyphIndexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(int) * characterGlyphIndices.size(), characterGlyphIndices.data(), GL_STREAM_DRAW);
+    if (instanceGlyphIndexBufferSize != sizeof(int) * characterGlyphIndices.size()) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(int) * characterGlyphIndices.size(), characterGlyphIndices.data(), GL_STREAM_DRAW);
+    } else {
+        glBufferSubData(GL_ARRAY_BUFFER, 0, instanceGlyphIndexBufferSize, characterGlyphIndices.data());
+    }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(vertexArray);
