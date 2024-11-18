@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 
     Shader textShader = Shader("assets/text.vert", "assets/text.frag");
 
-    Font font = Font("C:/Windows/Fonts/arial.ttf", 48);
+    Font font = Font("assets/PeaberryMono.ttf", 21);
 
     int width = 0, height = 0;
     while (!glfwWindowShouldClose(window)) {

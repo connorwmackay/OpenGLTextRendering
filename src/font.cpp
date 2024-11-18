@@ -190,11 +190,11 @@ void Font::SetupOpenGLState(unsigned int maxCharacterWidth, unsigned int maxChar
 
 void Font::DrawText(std::string text, glm::vec2 position, glm::vec3 colour, float scale) {
     glm::vec2 currentCharacterPosition = position;
-    for (char c : text) {
+    for (const char& c : text) {
         if (glyphs.find(c) != glyphs.end()) {
             FontGlyph glyph = glyphs.at(c);
 
-            float curX = currentCharacterPosition.x + maxCharacterWidth * scale;
+            float curX = currentCharacterPosition.x + glyph.pos.x * scale;
             float curY = currentCharacterPosition.y + (maxCharacterHeight - glyph.pos.y) * scale;
 
             characterPositions.push_back(glm::vec2(curX, curY));
